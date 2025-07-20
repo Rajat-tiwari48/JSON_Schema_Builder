@@ -1,0 +1,35 @@
+.app-layout {
+  padding: 24px;
+  background: #f9f9f9;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.app-title {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.field-group {
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.field-row-nested {
+  margin-bottom: 12px;
+}
+
+.nested-fields {
+  margin-left: 24px;
+  border-left: 2px solid #e5e5e5;
+  padding-left: 12px;
+  margin-top: 12px;
+}
+
+.json-preview {
+  background: #fff;
+  max-height: 80vh;
+  overflow: auto;
+} 
