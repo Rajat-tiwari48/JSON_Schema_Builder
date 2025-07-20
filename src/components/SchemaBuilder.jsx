@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { Row, Col, Card, Button } from 'antd';
+import { Row, Col, Card, Button, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import SchemaField from './SchemaField';
 
@@ -12,7 +12,7 @@ const SchemaBuilder = () => {
 
   const { control, handleSubmit, watch, register } = formMethods;
 
-  const { fields, append } = useFieldArray({
+  const { fields, append,remove } = useFieldArray({
     control,
     name: 'schema',
   });
@@ -20,7 +20,7 @@ const SchemaBuilder = () => {
   const schemaValues = watch('schema');
 
   const handleAddField = () => {
-    append({ key: '', type: '', required: false });
+    append({ key: '', type: undefined, required: false });
   };
 
   const onSubmit = (formData) => {
@@ -31,7 +31,7 @@ const SchemaBuilder = () => {
     const output = {};
 
     for (const field of data || []) {
-      const { key, type, children } = field;
+      const { key, type, children ,required} = field;
       if (!key) continue;
 
       switch (type) {
@@ -57,7 +57,9 @@ const SchemaBuilder = () => {
           output[key] = renderJSON(children);
           break;
         default:
-          output[key] = type || '';
+          // value = type || '';
+      
+        output[key] = type || '';
       }
     }
 
@@ -68,7 +70,7 @@ const SchemaBuilder = () => {
     <Row gutter={24} style={{ padding: 24 }}>
       <Col span={12}>
         <Card title="Schema Builder">
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
             {fields.map((item, idx) => (
               <SchemaField
                 key={item.id}
@@ -77,6 +79,7 @@ const SchemaBuilder = () => {
                 control={control}
                 register={register}
                 watch={watch}
+                removeField={() => remove(idx)}
               />
             ))}
             <Button
@@ -96,7 +99,7 @@ const SchemaBuilder = () => {
             >
               Submit
             </Button>
-          </form>
+          </Form>
         </Card>
       </Col>
 

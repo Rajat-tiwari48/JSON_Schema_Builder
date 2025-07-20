@@ -1,11 +1,11 @@
 import React from 'react';
 import { useFieldArray, useController } from 'react-hook-form';
-import { Input, Select, Button, Switch, Row, Col } from 'antd';
+import { Input, Select, Button, Switch, Row, Col,Tooltip  } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
-const SchemaField = ({ nestPath, fieldIndex, control, register, watch }) => {
+const SchemaField = ({ nestPath, fieldIndex, control, register, watch, removeField  }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: `${nestPath}.children`,
@@ -30,11 +30,9 @@ const SchemaField = ({ nestPath, fieldIndex, control, register, watch }) => {
   const type = watch(`${nestPath}.type`);
   const level = nestPath.split('.').filter(x => x !== 'children').length - 1;
 
-  const handleRemove = () => {
-    const parentPath = nestPath.substring(0, nestPath.lastIndexOf('.'));
-    const parentFields = control._fields?.[parentPath]?.parent?.fields;
-    if (parentFields?.remove) parentFields.remove(fieldIndex);
-  };
+   const handleRemove = () => {
+    removeField(fieldIndex);
+  };;
 
   return (
     <div
@@ -58,13 +56,15 @@ const SchemaField = ({ nestPath, fieldIndex, control, register, watch }) => {
         <Col>
           <Select
             {...typeField}
-            
+            placeholder="Field Type"
             onChange={(val) => {
+              
               typeField.onChange(val);
               if (val !== 'nested') remove();
             }}
-            
+
             style={{ width: 120 , overflowY: 'auto' }}
+             listHeight={128}
           >
             <Option value="nested">Nested</Option>
             <Option value="string">String</Option>
@@ -76,12 +76,15 @@ const SchemaField = ({ nestPath, fieldIndex, control, register, watch }) => {
           </Select>
         </Col>
         <Col>
+        <Tooltip title="Required">
           <Switch
             {...requiredField}
             checked={requiredField.value}
             onChange={requiredField.onChange}
+            size="small"
             
           />
+          </Tooltip>
         </Col>
         <Col>
           <Button
@@ -104,6 +107,7 @@ const SchemaField = ({ nestPath, fieldIndex, control, register, watch }) => {
               control={control}
               register={register}
               watch={watch}
+              removeField={() => remove(idx)}
             />
           ))}
           <Button
@@ -111,7 +115,7 @@ const SchemaField = ({ nestPath, fieldIndex, control, register, watch }) => {
             icon={<PlusOutlined />}
             style={{ marginTop: 10, width: '100%' }}
             onClick={() =>
-              append({ key: '', type: '', required: false })
+              append({ key: '', type: undefined, required: false })
             }
           >
             Add Item
